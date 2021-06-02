@@ -1,0 +1,17 @@
+Index: backports-5.8-1/include/net/cfg80211.h
+===================================================================
+--- backports-5.8-1.orig/include/net/cfg80211.h
++++ backports-5.8-1/include/net/cfg80211.h
+@@ -859,10 +859,10 @@ ieee80211_chandef_max_power(struct cfg80
+ {
+ 	switch (chandef->width) {
+ 	case NL80211_CHAN_WIDTH_5:
+-		return min(chandef->chan->max_reg_power - 6,
++		return min(chandef->chan->max_reg_power,
+ 			   chandef->chan->max_power);
+ 	case NL80211_CHAN_WIDTH_10:
+-		return min(chandef->chan->max_reg_power - 3,
++		return min(chandef->chan->max_reg_power,
+ 			   chandef->chan->max_power);
+ 	default:
+ 		break;

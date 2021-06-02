@@ -1,0 +1,39 @@
+From 7e91724f580274c9d4217b343eb677c2fbeead20 Mon Sep 17 00:00:00 2001
+From: Philipp Borgers <borgers@mi.fu-berlin.de>
+Date: Wed, 19 May 2021 13:36:57 +0200
+Subject: [PATCH v2 3/3] mac80211: refactor rc_no_data_or_no_ack_use_min
+ function
+
+Use newly introduced helper function ieee80211_is_tx_data to check if
+frame is a data frame. Takes into account that hardware encapsulation
+can be enabled for a frame and therefore no ieee80211 header is present.
+
+Signed-off-by: Philipp Borgers <borgers@mi.fu-berlin.de>
+---
+ net/mac80211/rate.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/net/mac80211/rate.c b/net/mac80211/rate.c
+index fa1c73d0ceff..208bd0c2b671 100644
+--- a/net/mac80211/rate.c
++++ b/net/mac80211/rate.c
+@@ -297,15 +297,11 @@ void ieee80211_check_rate_mask(struct ieee80211_sub_if_data *sdata)
+ static bool rc_no_data_or_no_ack_use_min(struct ieee80211_tx_rate_control *txrc)
+ {
+ 	struct sk_buff *skb = txrc->skb;
+-	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *) skb->data;
+ 	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
+-	__le16 fc;
+-
+-	fc = hdr->frame_control;
+ 
+ 	return (info->flags & (IEEE80211_TX_CTL_NO_ACK |
+ 			       IEEE80211_TX_CTL_USE_MINRATE)) ||
+-		!ieee80211_is_data(fc);
++		!ieee80211_is_tx_data(skb);
+ }
+ 
+ static void rc_send_low_basicrate(struct ieee80211_tx_rate *rate,
+-- 
+2.31.1
+

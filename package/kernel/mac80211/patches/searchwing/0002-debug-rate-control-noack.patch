@@ -1,0 +1,15 @@
+Index: backports-5.10.34-1/net/mac80211/rc80211_minstrel_ht.c
+===================================================================
+--- backports-5.10.34-1.orig/net/mac80211/rc80211_minstrel_ht.c
++++ backports-5.10.34-1/net/mac80211/rc80211_minstrel_ht.c
+@@ -1179,6 +1179,10 @@ minstrel_ht_tx_status(void *priv, struct
+ 	bool last, update = false;
+ 	int i;
+ 
++	/* Ignore packets with noAck flag */
++	if (info->flags & IEEE80211_TX_CTL_NO_ACK)
++		return;
++
+ 	/* This packet was aggregated but doesn't carry status info */
+ 	if ((info->flags & IEEE80211_TX_CTL_AMPDU) &&
+ 	    !(info->flags & IEEE80211_TX_STAT_AMPDU))
